@@ -90,6 +90,9 @@ fn test_tokenize_separator() {
 
     tokenizer = Tokenizer::new(".");
     assert_eq!(tokenizer.tokenize_separator(), Some(Token::Separator('.')));
+
+    tokenizer = Tokenizer::new(".abc.");
+    assert_eq!(tokenizer.tokenize_separator(), Some(Token::Separator('.')));
 }
 
 #[test]
@@ -102,6 +105,9 @@ fn test_tokenize_id_or_lambda() {
 
     tokenizer = Tokenizer::new("fna");
     assert_eq!(tokenizer.tokenize_id_or_lambda(), Some(Token::Id("fna".to_owned())));
+
+    tokenizer = Tokenizer::new("abc(de)");
+    assert_eq!(tokenizer.tokenize_id_or_lambda(), Some(Token::Id("abc".to_owned())));
 }
 
 #[test]

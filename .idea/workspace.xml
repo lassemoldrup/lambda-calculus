@@ -46,7 +46,7 @@
       <command value="cargo test" />
     </option>
   </component>
-  <component name="RunManager" selected="Cargo.Test lexer::test_tokenize">
+  <component name="RunManager" selected="Cargo.Test lexer::test_tokenize_id_or_lambda">
     <configuration name="Test lexer::test_lex" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="channel" value="DEFAULT" />
       <option name="command" value="test --package lambda-calculus --bin lambda-calculus lexer::test_lex -- --exact" />
@@ -114,10 +114,10 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Cargo.Test lexer::test_tokenize" />
-        <item itemvalue="Cargo.Test lexer::test_lex" />
         <item itemvalue="Cargo.Test lexer::test_tokenize_id_or_lambda" />
         <item itemvalue="Cargo.Test lexer::test_tokenize_separator" />
+        <item itemvalue="Cargo.Test lexer::test_tokenize" />
+        <item itemvalue="Cargo.Test lexer::test_lex" />
         <item itemvalue="Cargo.test" />
       </list>
     </recent_temporary>
