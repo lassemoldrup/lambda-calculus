@@ -124,4 +124,6 @@ fn test_tokenize() {
     assert_eq!(tokenize("fn a . a \n . \t )".to_owned()),
                vec![Token::Lambda, Token::Id("a".to_owned()), Token::Separator('.'),
                     Token::Id("a".to_owned()), Token::Separator('.'), Token::Separator(')')]);
+
+    assert_eq!(tokenize(String::new()), Vec::new());
 }

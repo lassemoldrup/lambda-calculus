@@ -12,7 +12,10 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a1a906a8-afc0-49ad-b0ff-1db47f1096a0" name="Default Changelist" comment="" />
+    <list default="true" id="a1a906a8-afc0-49ad-b0ff-1db47f1096a0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lexer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lexer.rs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -46,7 +49,7 @@
       <command value="cargo test" />
     </option>
   </component>
-  <component name="RunManager" selected="Cargo.Test lexer::test_tokenize_id_or_lambda">
+  <component name="RunManager" selected="Cargo.Test lexer::test_tokenize">
     <configuration name="Test lexer::test_lex" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="channel" value="DEFAULT" />
       <option name="command" value="test --package lambda-calculus --bin lambda-calculus lexer::test_lex -- --exact" />
@@ -114,9 +117,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Cargo.Test lexer::test_tokenize" />
         <item itemvalue="Cargo.Test lexer::test_tokenize_id_or_lambda" />
         <item itemvalue="Cargo.Test lexer::test_tokenize_separator" />
-        <item itemvalue="Cargo.Test lexer::test_tokenize" />
         <item itemvalue="Cargo.Test lexer::test_lex" />
         <item itemvalue="Cargo.test" />
       </list>
@@ -139,7 +142,7 @@
       <updated>1601750813477</updated>
       <workItem from="1601750816884" duration="22000" />
       <workItem from="1601750857647" duration="91000" />
-      <workItem from="1601751002863" duration="9883000" />
+      <workItem from="1601751002863" duration="10220000" />
     </task>
     <servers />
   </component>
@@ -152,22 +155,22 @@
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
     <state x="584" y="303" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1792.1120@0.0.1792.1120" timestamp="1601750913288" />
-    <state width="1750" height="318" key="GridCell.Tab.0.bottom" timestamp="1601762718717">
+    <state width="1750" height="318" key="GridCell.Tab.0.bottom" timestamp="1601763000299">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="318" key="GridCell.Tab.0.bottom/0.0.1792.1120@0.0.1792.1120" timestamp="1601762718717" />
-    <state width="1750" height="318" key="GridCell.Tab.0.center" timestamp="1601762718716">
+    <state width="1750" height="318" key="GridCell.Tab.0.bottom/0.0.1792.1120@0.0.1792.1120" timestamp="1601763000299" />
+    <state width="1750" height="318" key="GridCell.Tab.0.center" timestamp="1601763000297">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="318" key="GridCell.Tab.0.center/0.0.1792.1120@0.0.1792.1120" timestamp="1601762718716" />
-    <state width="1750" height="318" key="GridCell.Tab.0.left" timestamp="1601762718715">
+    <state width="1750" height="318" key="GridCell.Tab.0.center/0.0.1792.1120@0.0.1792.1120" timestamp="1601763000297" />
+    <state width="1750" height="318" key="GridCell.Tab.0.left" timestamp="1601763000297">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="318" key="GridCell.Tab.0.left/0.0.1792.1120@0.0.1792.1120" timestamp="1601762718715" />
-    <state width="1750" height="318" key="GridCell.Tab.0.right" timestamp="1601762718716">
+    <state width="1750" height="318" key="GridCell.Tab.0.left/0.0.1792.1120@0.0.1792.1120" timestamp="1601763000297" />
+    <state width="1750" height="318" key="GridCell.Tab.0.right" timestamp="1601763000298">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="318" key="GridCell.Tab.0.right/0.0.1792.1120@0.0.1792.1120" timestamp="1601762718716" />
+    <state width="1750" height="318" key="GridCell.Tab.0.right/0.0.1792.1120@0.0.1792.1120" timestamp="1601763000298" />
     <state x="397" y="199" key="SettingsEditor" timestamp="1601758448655">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
