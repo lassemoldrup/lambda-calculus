@@ -1,6 +1,16 @@
+use std::env::args;
+use std::fs::File;
+use std::io::Read;
+
 mod lexer;
 mod parser;
+mod interpreter;
 
-fn main() {
-    println!("Hello, world!");
+fn main() -> Result<(), parser::ParseError> {
+    let mut file = String::new();
+    File::open(args().nth(1).unwrap()).unwrap().read_to_string(&mut file).unwrap();
+
+    println!("{:?}", interpreter::eval(parser::parse(&lexer::tokenize(file))?));
+
+    Ok(())
 }

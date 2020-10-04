@@ -1,8 +1,8 @@
 use std::fmt::{Debug, Formatter, self, Display};
 use std::error::Error;
-use super::lexer::{Token, tokenize};
+use super::lexer::*;
 
-#[derive(Eq, PartialEq, Debug)]
+#[derive(Eq, PartialEq, Debug, Clone)]
 pub enum AstNode {
     Var(String),
     Abstraction(String, Box<AstNode>),
