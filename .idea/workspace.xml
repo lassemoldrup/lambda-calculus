@@ -14,7 +14,7 @@
   <component name="ChangeListManager">
     <list default="true" id="a1a906a8-afc0-49ad-b0ff-1db47f1096a0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lexer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lexer.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +49,7 @@
       <command value="cargo test" />
     </option>
   </component>
-  <component name="RunManager" selected="Cargo.Test lexer::test_tokenize">
+  <component name="RunManager" selected="Cargo.Test parser::test_parse">
     <configuration name="Test lexer::test_lex" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="channel" value="DEFAULT" />
       <option name="command" value="test --package lambda-calculus --bin lambda-calculus lexer::test_lex -- --exact" />
@@ -98,9 +98,9 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
-    <configuration name="test" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+    <configuration name="Test parser::test_parse" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="channel" value="DEFAULT" />
-      <option name="command" value="test" />
+      <option name="command" value="test --package lambda-calculus --bin lambda-calculus parser::test_parse -- --exact" />
       <option name="allFeatures" value="false" />
       <option name="emulateTerminal" value="false" />
       <option name="backtrace" value="SHORT" />
@@ -117,11 +117,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Cargo.Test parser::test_parse" />
         <item itemvalue="Cargo.Test lexer::test_tokenize" />
         <item itemvalue="Cargo.Test lexer::test_tokenize_id_or_lambda" />
         <item itemvalue="Cargo.Test lexer::test_tokenize_separator" />
         <item itemvalue="Cargo.Test lexer::test_lex" />
-        <item itemvalue="Cargo.test" />
       </list>
     </recent_temporary>
   </component>
@@ -142,35 +142,59 @@
       <updated>1601750813477</updated>
       <workItem from="1601750816884" duration="22000" />
       <workItem from="1601750857647" duration="91000" />
-      <workItem from="1601751002863" duration="10220000" />
+      <workItem from="1601751002863" duration="22043000" />
     </task>
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="709" y="283" key="#com.intellij.ide.util.MemberChooser" timestamp="1601751045735">
+    <state x="709" y="283" key="#com.intellij.ide.util.MemberChooser" timestamp="1601780339253">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state x="709" y="283" key="#com.intellij.ide.util.MemberChooser/0.0.1792.1120@0.0.1792.1120" timestamp="1601751045735" />
+    <state x="709" y="283" key="#com.intellij.ide.util.MemberChooser/0.0.1792.1120@0.0.1792.1120" timestamp="1601780339253" />
     <state x="584" y="303" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1601750913288">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
     <state x="584" y="303" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1792.1120@0.0.1792.1120" timestamp="1601750913288" />
-    <state width="1750" height="318" key="GridCell.Tab.0.bottom" timestamp="1601763000299">
+    <state x="795" y="320" key="#xdebugger.XInspectDialog" timestamp="1601820446050">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="318" key="GridCell.Tab.0.bottom/0.0.1792.1120@0.0.1792.1120" timestamp="1601763000299" />
-    <state width="1750" height="318" key="GridCell.Tab.0.center" timestamp="1601763000297">
+    <state x="795" y="320" key="#xdebugger.XInspectDialog/0.0.1792.1120@0.0.1792.1120" timestamp="1601820446050" />
+    <state width="442" height="466" key="DebuggerActiveHint" timestamp="1601818755091">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="318" key="GridCell.Tab.0.center/0.0.1792.1120@0.0.1792.1120" timestamp="1601763000297" />
-    <state width="1750" height="318" key="GridCell.Tab.0.left" timestamp="1601763000297">
+    <state width="442" height="466" key="DebuggerActiveHint/0.0.1792.1120@0.0.1792.1120" timestamp="1601818755091" />
+    <state width="1750" height="318" key="GridCell.Tab.0.bottom" timestamp="1601821837684">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="318" key="GridCell.Tab.0.left/0.0.1792.1120@0.0.1792.1120" timestamp="1601763000297" />
-    <state width="1750" height="318" key="GridCell.Tab.0.right" timestamp="1601763000298">
+    <state width="1750" height="318" key="GridCell.Tab.0.bottom/0.0.1792.1120@0.0.1792.1120" timestamp="1601821837684" />
+    <state width="1750" height="318" key="GridCell.Tab.0.center" timestamp="1601821837683">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="318" key="GridCell.Tab.0.right/0.0.1792.1120@0.0.1792.1120" timestamp="1601763000298" />
+    <state width="1750" height="318" key="GridCell.Tab.0.center/0.0.1792.1120@0.0.1792.1120" timestamp="1601821837683" />
+    <state width="1750" height="318" key="GridCell.Tab.0.left" timestamp="1601821837683">
+      <screen x="0" y="0" width="1792" height="1120" />
+    </state>
+    <state width="1750" height="318" key="GridCell.Tab.0.left/0.0.1792.1120@0.0.1792.1120" timestamp="1601821837683" />
+    <state width="1750" height="318" key="GridCell.Tab.0.right" timestamp="1601821837684">
+      <screen x="0" y="0" width="1792" height="1120" />
+    </state>
+    <state width="1750" height="318" key="GridCell.Tab.0.right/0.0.1792.1120@0.0.1792.1120" timestamp="1601821837684" />
+    <state width="1750" height="392" key="GridCell.Tab.1.bottom" timestamp="1601821447137">
+      <screen x="0" y="0" width="1792" height="1120" />
+    </state>
+    <state width="1750" height="392" key="GridCell.Tab.1.bottom/0.0.1792.1120@0.0.1792.1120" timestamp="1601821447137" />
+    <state width="1750" height="392" key="GridCell.Tab.1.center" timestamp="1601821447136">
+      <screen x="0" y="0" width="1792" height="1120" />
+    </state>
+    <state width="1750" height="392" key="GridCell.Tab.1.center/0.0.1792.1120@0.0.1792.1120" timestamp="1601821447136" />
+    <state width="1750" height="392" key="GridCell.Tab.1.left" timestamp="1601821447136">
+      <screen x="0" y="0" width="1792" height="1120" />
+    </state>
+    <state width="1750" height="392" key="GridCell.Tab.1.left/0.0.1792.1120@0.0.1792.1120" timestamp="1601821447136" />
+    <state width="1750" height="392" key="GridCell.Tab.1.right" timestamp="1601821447136">
+      <screen x="0" y="0" width="1792" height="1120" />
+    </state>
+    <state width="1750" height="392" key="GridCell.Tab.1.right/0.0.1792.1120@0.0.1792.1120" timestamp="1601821447136" />
     <state x="397" y="199" key="SettingsEditor" timestamp="1601758448655">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
@@ -179,9 +203,25 @@
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
     <state x="561" y="265" width="670" height="675" key="run.anything.popup/0.0.1792.1120@0.0.1792.1120" timestamp="1601758343472" />
-    <state x="561" y="251" width="670" height="676" key="search.everywhere.popup" timestamp="1601762028416">
+    <state x="561" y="251" width="670" height="676" key="search.everywhere.popup" timestamp="1601821297166">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state x="561" y="251" width="670" height="676" key="search.everywhere.popup/0.0.1792.1120@0.0.1792.1120" timestamp="1601762028416" />
+    <state x="561" y="251" width="670" height="676" key="search.everywhere.popup/0.0.1792.1120@0.0.1792.1120" timestamp="1601821297166" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/parser.rs</url>
+          <line>76</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="CargoCommandRunConfiguration">
+        <watch expression="*tok" language="Rust" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>
