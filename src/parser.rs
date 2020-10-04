@@ -9,6 +9,7 @@ pub enum AstNode {
     Application(Box<AstNode>, Box<AstNode>),
 }
 
+
 pub struct ParseError(String);
 
 impl Debug for ParseError {
@@ -38,6 +39,7 @@ impl From<String> for ParseError {
 }
 
 type Result<T> = std::result::Result<T, ParseError>;
+
 
 pub fn parse(tokens: &[Token]) -> Result<AstNode> {
     use Token::*;
@@ -117,6 +119,7 @@ fn partition_at_last_term(tokens: &[Token]) -> Result<(&[Token], &[Token])> {
         [.., tok] => Err(format!("Unexpected token {:?}", tok).into())
     }
 }
+
 
 #[test]
 fn test_parse() {
