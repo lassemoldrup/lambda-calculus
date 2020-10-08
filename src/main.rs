@@ -10,7 +10,7 @@ fn main() -> Result<(), parser::ParseError> {
     let mut file = String::new();
     File::open(args().nth(1).unwrap()).unwrap().read_to_string(&mut file).unwrap();
 
-    println!("{:?}", interpreter::eval(parser::parse(&lexer::tokenize(&file))?));
+    println!("{:?}", parser::parse(&lexer::tokenize(&file))?.eval());
 
     Ok(())
 }
