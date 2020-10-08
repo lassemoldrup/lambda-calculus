@@ -125,29 +125,29 @@ fn partition_at_last_term(tokens: &[Token]) -> Result<(&[Token], &[Token])> {
 fn test_parse() {
     use AstNode::*;
 
-    assert_eq!(parse(&tokenize("abc".to_owned())).unwrap(), Var("abc".to_owned()));
-    assert_eq!(parse(&tokenize("(abc)".to_owned())).unwrap(), Var("abc".to_owned()));
-    assert_eq!(parse(&tokenize("a (abc)".to_owned())).unwrap(),
+    assert_eq!(parse(&tokenize("abc")).unwrap(), Var("abc".to_owned()));
+    assert_eq!(parse(&tokenize("(abc)")).unwrap(), Var("abc".to_owned()));
+    assert_eq!(parse(&tokenize("a (abc)")).unwrap(),
                Application(Box::new(Var("a".to_owned())), Box::new(Var("abc".to_owned()))));
-    assert_eq!(parse(&tokenize("fn a. a".to_owned())).unwrap(),
+    assert_eq!(parse(&tokenize("fn a. a")).unwrap(),
                Abstraction("a".to_owned(), Box::new(Var("a".to_owned()))));
-    assert_eq!(parse(&tokenize("x fn a. a".to_owned())).unwrap(),
+    assert_eq!(parse(&tokenize("x fn a. a")).unwrap(),
                Application(Box::new(Var("x".to_owned())),
                            Box::new(Abstraction("a".to_owned(), Box::new(Var("a".to_owned()))))));
-    assert_eq!(parse(&tokenize("(fn x. a x) (fn b. b) c".to_owned())).unwrap(),
+    assert_eq!(parse(&tokenize("(fn x. a x) (fn b. b) c")).unwrap(),
                Application(Box::new(Application(Box::new(Abstraction("x".to_string(),
                                                                      Box::new(Application(Box::new(Var("a".to_owned())),
                                                                                           Box::new(Var("x".to_owned())))))),
                                                 Box::new(Abstraction("b".to_owned(), Box::new(Var("b".to_owned())))))),
                            Box::new(Var("c".to_owned()))));
-    assert_eq!(parse(&tokenize("fn a. fn b. a b".to_owned())).unwrap(),
+    assert_eq!(parse(&tokenize("fn a. fn b. a b")).unwrap(),
                Abstraction("a".to_owned(), Box::new(Abstraction("b".to_owned(),
                                                     Box::new(Application(Box::new(Var("a".to_owned())),
                                                                      Box::new(Var("b".to_owned()))))))));
 
-    assert!(parse(&tokenize(")".to_owned())).is_err());
-    assert!(parse(&tokenize("abc(".to_owned())).is_err());
-    assert!(parse(&tokenize("fn a a".to_owned())).is_err());
-    assert!(parse(&tokenize("(fn a. a() fn b. b)".to_owned())).is_err());
-    assert!(parse(&tokenize("(fn a. a) fn b. b c.".to_owned())).is_err());
+    assert!(parse(&tokenize(")")).is_err());
+    assert!(parse(&tokenize("abc(")).is_err());
+    assert!(parse(&tokenize("fn a a")).is_err());
+    assert!(parse(&tokenize("(fn a. a() fn b. b)")).is_err());
+    assert!(parse(&tokenize("(fn a. a) fn b. b c.")).is_err());
 }

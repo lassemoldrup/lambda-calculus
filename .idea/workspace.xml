@@ -13,8 +13,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a1a906a8-afc0-49ad-b0ff-1db47f1096a0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/interpreter.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lexer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lexer.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/parser.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser.rs" afterDir="false" />
     </list>
@@ -52,7 +52,7 @@
       <command value="cargo test" />
     </option>
   </component>
-  <component name="RunManager" selected="Cargo.Test parser::test_parse">
+  <component name="RunManager" selected="Cargo.Test lexer::test_tokenize">
     <configuration name="Test lexer::test_lex" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="channel" value="DEFAULT" />
       <option name="command" value="test --package lambda-calculus --bin lambda-calculus lexer::test_lex -- --exact" />
@@ -120,8 +120,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Cargo.Test parser::test_parse" />
         <item itemvalue="Cargo.Test lexer::test_tokenize" />
+        <item itemvalue="Cargo.Test parser::test_parse" />
         <item itemvalue="Cargo.Test lexer::test_tokenize_id_or_lambda" />
         <item itemvalue="Cargo.Test lexer::test_tokenize_separator" />
         <item itemvalue="Cargo.Test lexer::test_lex" />
@@ -131,6 +131,7 @@
   <component name="RustProjectSettings">
     <option name="externalLinter" value="Clippy" />
     <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
+    <option name="version" value="2" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">

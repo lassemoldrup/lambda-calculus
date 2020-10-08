@@ -76,8 +76,8 @@ fn is_separator(ch: char) -> bool {
 }
 
 
-pub fn tokenize(program: String) -> Vec<Token> {
-    Tokenizer::new(program.as_str()).collect()
+pub fn tokenize(program: &str) -> Vec<Token> {
+    Tokenizer::new(program).collect()
 }
 
 #[test]
@@ -112,18 +112,18 @@ fn test_tokenize_id_or_lambda() {
 
 #[test]
 fn test_tokenize() {
-    assert_eq!(tokenize("abc".to_owned()), vec![Token::Id("abc".to_owned())]);
-    assert_eq!(tokenize("(".to_owned()), vec![Token::Separator('(')]);
-    assert_eq!(tokenize(")".to_owned()), vec![Token::Separator(')')]);
-    assert_eq!(tokenize(".".to_owned()), vec![Token::Separator('.')]);
-    assert_eq!(tokenize("fn".to_owned()), vec![Token::Lambda]);
+    assert_eq!(tokenize("abc"), vec![Token::Id("abc".to_owned())]);
+    assert_eq!(tokenize("("), vec![Token::Separator('(')]);
+    assert_eq!(tokenize(")"), vec![Token::Separator(')')]);
+    assert_eq!(tokenize("."), vec![Token::Separator('.')]);
+    assert_eq!(tokenize("fn"), vec![Token::Lambda]);
 
-    assert_eq!(tokenize("abc  ( fn )".to_owned()),
+    assert_eq!(tokenize("abc  ( fn )"),
                vec![Token::Id("abc".to_owned()), Token::Separator('('), Token::Lambda, Token::Separator(')')]);
 
-    assert_eq!(tokenize("fn a . a \n . \t )".to_owned()),
+    assert_eq!(tokenize("fn a . a \n . \t )"),
                vec![Token::Lambda, Token::Id("a".to_owned()), Token::Separator('.'),
                     Token::Id("a".to_owned()), Token::Separator('.'), Token::Separator(')')]);
 
-    assert_eq!(tokenize(String::new()), Vec::new());
+    assert_eq!(tokenize(""), Vec::new());
 }
