@@ -1,1 +1,1 @@
-(fn a. a) (fn t. fn f. t) a b
+(fn y. fn x.(fn x.x) x) b a

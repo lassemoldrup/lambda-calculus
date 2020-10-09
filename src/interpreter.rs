@@ -1,37 +1,62 @@
 use crate::parser::AstNode;
 
+pub enum Strategy {
+    NormalOrder,
+    CallByName,
+}
+
 impl AstNode {
-    // Normal order
-    pub fn eval(self) -> AstNode {
+    pub fn eval(self, strategy: Strategy) -> Self {
+        match strategy {
+            Strategy::NormalOrder => self.eval_normal_order(),
+            Strategy::CallByName => self.eval_call_by_name(),
+        }
+    }
+    
+    fn eval_normal_order(self) -> Self {
         use AstNode::*;
 
-        match self.clone() {
+        match self {
             Var(_) => self,
-            Abstraction(id, body) => Abstraction(id, Box::new(body.eval())),
-            Application(fun, arg) => match *fun {
-                Abstraction(id, body) => (*body).substitute(&id, &*arg),
+            Abs(id, body) => Abs(id, body.eval_normal_order().into()),
+            App(fun, arg) => match *fun {
+                Abs(id, body) => body.substitute(&id, &*arg).eval_normal_order(),
                 _ => {
-                    let result = Application(Box::new(fun.clone().eval()), arg.clone());
-                    if result == self {
-                        Application(fun, Box::new(arg.eval()))
-                    } else {
-                        result.eval()
+                    let lambda = fun.eval_call_by_name();
+                    match lambda {
+                        Abs(_, _) => App(lambda.into(), arg).eval_normal_order(),
+                        _ => App(lambda.into(), arg.eval_normal_order().into()),
                     }
                 }
+            }
+        }
+    }
+
+    fn eval_call_by_name(self) -> Self {
+        use AstNode::*;
+
+        match self {
+            App(fun, arg) => {
+                let lambda = fun.eval_call_by_name();
+                match lambda {
+                    Abs(id, body) => body.substitute(&id, &*arg).eval_call_by_name(),
+                    _ => App(lambda.into(), arg.eval_call_by_name().into()),
+                }
             },
+            _ => self,
         }
     }
 
     // Beta reduction
-    fn substitute(&self, id: &String, val: &AstNode) -> AstNode {
+    fn substitute(self, id: &String, term: &Self) -> Self {
         use AstNode::*;
 
         match self {
-            Var(x) => if x == id { val.clone() } else { self.clone() },
-            Abstraction(x, _) if x == id => self.clone(),
-            Abstraction(x, body) => Abstraction(x.clone(), Box::new(body.substitute(id, val))),
-            Application(fun, arg) => Application(Box::new(fun.substitute(id, val)),
-                                                 Box::new(arg.substitute(id, val))),
+            Var(ref x) if x == id => term.clone(),
+            Var(_) => self,
+            Abs(ref x, _) if x == id => self,
+            Abs(x, body) => Abs(x, body.substitute(id, term).into()),
+            App(fun, arg) => App(fun.substitute(id, term).into(), arg.substitute(id, term).into()),
         }
     }
 }

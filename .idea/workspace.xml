@@ -16,6 +16,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/interpreter.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/interpreter.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/parser.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.lc" beforeDir="false" afterPath="$PROJECT_DIR$/test.lc" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,10 +53,10 @@
       <command value="cargo test" />
     </option>
   </component>
-  <component name="RunManager" selected="Cargo.Test lexer::test_tokenize">
-    <configuration name="Test lexer::test_lex" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+  <component name="RunManager" selected="Cargo.Run lambda-calculus">
+    <configuration name="Run lambda-calculus" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="channel" value="DEFAULT" />
-      <option name="command" value="test --package lambda-calculus --bin lambda-calculus lexer::test_lex -- --exact" />
+      <option name="command" value="run --package lambda-calculus --bin lambda-calculus test.lc" />
       <option name="allFeatures" value="false" />
       <option name="emulateTerminal" value="false" />
       <option name="backtrace" value="SHORT" />
@@ -117,13 +119,20 @@
         <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Cargo.Run lambda-calculus" />
+      <item itemvalue="Cargo.Test lexer::test_tokenize" />
+      <item itemvalue="Cargo.Test lexer::test_tokenize_id_or_lambda" />
+      <item itemvalue="Cargo.Test lexer::test_tokenize_separator" />
+      <item itemvalue="Cargo.Test parser::test_parse" />
+    </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Cargo.Run lambda-calculus" />
         <item itemvalue="Cargo.Test lexer::test_tokenize" />
         <item itemvalue="Cargo.Test parser::test_parse" />
         <item itemvalue="Cargo.Test lexer::test_tokenize_id_or_lambda" />
         <item itemvalue="Cargo.Test lexer::test_tokenize_separator" />
-        <item itemvalue="Cargo.Test lexer::test_lex" />
       </list>
     </recent_temporary>
   </component>
@@ -150,10 +159,14 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="709" y="283" key="#com.intellij.ide.util.MemberChooser" timestamp="1601780339253">
+    <state x="360" y="222" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1602268838663">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state x="709" y="283" key="#com.intellij.ide.util.MemberChooser/0.0.1792.1120@0.0.1792.1120" timestamp="1601780339253" />
+    <state x="360" y="222" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1792.1120@0.0.1792.1120" timestamp="1602268838663" />
+    <state x="709" y="283" key="#com.intellij.ide.util.MemberChooser" timestamp="1602266964825">
+      <screen x="0" y="0" width="1792" height="1120" />
+    </state>
+    <state x="709" y="283" key="#com.intellij.ide.util.MemberChooser/0.0.1792.1120@0.0.1792.1120" timestamp="1602266964825" />
     <state x="584" y="303" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1601750913288">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
@@ -166,38 +179,38 @@
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
     <state width="442" height="466" key="DebuggerActiveHint/0.0.1792.1120@0.0.1792.1120" timestamp="1601818755091" />
-    <state width="1750" height="318" key="GridCell.Tab.0.bottom" timestamp="1602198536874">
+    <state width="1750" height="318" key="GridCell.Tab.0.bottom" timestamp="1602269681828">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="318" key="GridCell.Tab.0.bottom/0.0.1792.1120@0.0.1792.1120" timestamp="1602198536874" />
-    <state width="1750" height="318" key="GridCell.Tab.0.center" timestamp="1602198536873">
+    <state width="1750" height="318" key="GridCell.Tab.0.bottom/0.0.1792.1120@0.0.1792.1120" timestamp="1602269681828" />
+    <state width="1750" height="318" key="GridCell.Tab.0.center" timestamp="1602269681827">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="318" key="GridCell.Tab.0.center/0.0.1792.1120@0.0.1792.1120" timestamp="1602198536873" />
-    <state width="1750" height="318" key="GridCell.Tab.0.left" timestamp="1602198536873">
+    <state width="1750" height="318" key="GridCell.Tab.0.center/0.0.1792.1120@0.0.1792.1120" timestamp="1602269681827" />
+    <state width="1750" height="318" key="GridCell.Tab.0.left" timestamp="1602269681826">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="318" key="GridCell.Tab.0.left/0.0.1792.1120@0.0.1792.1120" timestamp="1602198536873" />
-    <state width="1750" height="318" key="GridCell.Tab.0.right" timestamp="1602198536874">
+    <state width="1750" height="318" key="GridCell.Tab.0.left/0.0.1792.1120@0.0.1792.1120" timestamp="1602269681826" />
+    <state width="1750" height="318" key="GridCell.Tab.0.right" timestamp="1602269681828">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="318" key="GridCell.Tab.0.right/0.0.1792.1120@0.0.1792.1120" timestamp="1602198536874" />
-    <state width="1750" height="392" key="GridCell.Tab.1.bottom" timestamp="1601821447137">
+    <state width="1750" height="318" key="GridCell.Tab.0.right/0.0.1792.1120@0.0.1792.1120" timestamp="1602269681828" />
+    <state width="1750" height="392" key="GridCell.Tab.1.bottom" timestamp="1602269386329">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="392" key="GridCell.Tab.1.bottom/0.0.1792.1120@0.0.1792.1120" timestamp="1601821447137" />
-    <state width="1750" height="392" key="GridCell.Tab.1.center" timestamp="1601821447136">
+    <state width="1750" height="392" key="GridCell.Tab.1.bottom/0.0.1792.1120@0.0.1792.1120" timestamp="1602269386329" />
+    <state width="1750" height="392" key="GridCell.Tab.1.center" timestamp="1602269386329">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="392" key="GridCell.Tab.1.center/0.0.1792.1120@0.0.1792.1120" timestamp="1601821447136" />
-    <state width="1750" height="392" key="GridCell.Tab.1.left" timestamp="1601821447136">
+    <state width="1750" height="392" key="GridCell.Tab.1.center/0.0.1792.1120@0.0.1792.1120" timestamp="1602269386329" />
+    <state width="1750" height="392" key="GridCell.Tab.1.left" timestamp="1602269386328">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="392" key="GridCell.Tab.1.left/0.0.1792.1120@0.0.1792.1120" timestamp="1601821447136" />
-    <state width="1750" height="392" key="GridCell.Tab.1.right" timestamp="1601821447136">
+    <state width="1750" height="392" key="GridCell.Tab.1.left/0.0.1792.1120@0.0.1792.1120" timestamp="1602269386328" />
+    <state width="1750" height="392" key="GridCell.Tab.1.right" timestamp="1602269386329">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="392" key="GridCell.Tab.1.right/0.0.1792.1120@0.0.1792.1120" timestamp="1601821447136" />
+    <state width="1750" height="392" key="GridCell.Tab.1.right/0.0.1792.1120@0.0.1792.1120" timestamp="1602269386329" />
     <state x="397" y="199" key="SettingsEditor" timestamp="1601758448655">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
@@ -206,10 +219,10 @@
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
     <state x="561" y="265" width="670" height="675" key="run.anything.popup/0.0.1792.1120@0.0.1792.1120" timestamp="1601758343472" />
-    <state x="561" y="251" width="670" height="676" key="search.everywhere.popup" timestamp="1601822114971">
+    <state x="561" y="251" width="670" height="676" key="search.everywhere.popup" timestamp="1602201885297">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state x="561" y="251" width="670" height="676" key="search.everywhere.popup/0.0.1792.1120@0.0.1792.1120" timestamp="1601822114971" />
+    <state x="561" y="251" width="670" height="676" key="search.everywhere.popup/0.0.1792.1120@0.0.1792.1120" timestamp="1602201885297" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
