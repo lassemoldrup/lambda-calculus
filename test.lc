@@ -1,1 +1,0 @@
-(fn y. fn x.(fn x.x) x) b a

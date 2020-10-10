@@ -59,7 +59,7 @@ impl From<String> for ParseError {
     }
 }
 
-type Result<T> = std::result::Result<T, ParseError>;
+pub type Result<T> = std::result::Result<T, ParseError>;
 
 
 pub fn parse(tokens: &[Token]) -> Result<AstNode> {
