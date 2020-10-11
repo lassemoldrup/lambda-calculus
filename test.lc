@@ -1,0 +1,3 @@
+ID = \x.x;
+TRU = \t.\f.t;
+ID TRU evals_to_this not_this

@@ -36,7 +36,7 @@ impl AstNode {
     }
 
     // Beta reduction
-    fn substitute(self, id: &String, term: &Self) -> Self {
+    pub fn substitute(self, id: &String, term: &Self) -> Self {
         use AstNode::*;
 
         match self {

@@ -12,7 +12,9 @@ fn main() -> parser::Result<()> {
     let mut file = String::new();
     File::open(args().nth(1).unwrap()).unwrap().read_to_string(&mut file).unwrap();
 
-    println!("{}", parse(&tokenize(&file))?.eval_normal_order());
+    let parsed = parse(&tokenize(&file))?;
+    println!("Parsed input: {}", parsed);
+    println!("{}", parsed.eval_normal_order());
 
     Ok(())
 }

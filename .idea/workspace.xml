@@ -14,8 +14,10 @@
   <component name="ChangeListManager">
     <list default="true" id="a1a906a8-afc0-49ad-b0ff-1db47f1096a0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lexer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lexer.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/interpreter.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/interpreter.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/parser.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.lc" beforeDir="false" afterPath="$PROJECT_DIR$/test.lc" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +53,7 @@
       <command value="cargo test" />
     </option>
   </component>
-  <component name="RunManager" selected="Cargo.Test parser::test_parse">
+  <component name="RunManager" selected="Cargo.Run lambda-calculus">
     <configuration name="Run lambda-calculus" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="channel" value="DEFAULT" />
       <option name="command" value="run --package lambda-calculus --bin lambda-calculus test.lc" />
@@ -126,10 +128,10 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Cargo.Run lambda-calculus" />
         <item itemvalue="Cargo.Test parser::test_parse" />
         <item itemvalue="Cargo.Test lexer::test_tokenize" />
         <item itemvalue="Cargo.Test lexer::test_tokenize_char" />
-        <item itemvalue="Cargo.Run lambda-calculus" />
         <item itemvalue="Cargo.Test lexer::test_tokenize_id_or_lambda" />
       </list>
     </recent_temporary>
@@ -157,10 +159,14 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="360" y="222" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1602268838663">
+    <state x="360" y="222" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1602450260659">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state x="360" y="222" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1792.1120@0.0.1792.1120" timestamp="1602268838663" />
+    <state x="360" y="222" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1792.1120@0.0.1792.1120" timestamp="1602450260659" />
+    <state x="624" y="369" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1602450368810">
+      <screen x="0" y="0" width="1792" height="1120" />
+    </state>
+    <state x="624" y="369" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1792.1120@0.0.1792.1120" timestamp="1602450368810" />
     <state x="709" y="283" key="#com.intellij.ide.util.MemberChooser" timestamp="1602266964825">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
@@ -177,22 +183,22 @@
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
     <state width="442" height="466" key="DebuggerActiveHint/0.0.1792.1120@0.0.1792.1120" timestamp="1601818755091" />
-    <state width="1750" height="318" key="GridCell.Tab.0.bottom" timestamp="1602442542422">
+    <state width="1750" height="318" key="GridCell.Tab.0.bottom" timestamp="1602450465126">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="318" key="GridCell.Tab.0.bottom/0.0.1792.1120@0.0.1792.1120" timestamp="1602442542422" />
-    <state width="1750" height="318" key="GridCell.Tab.0.center" timestamp="1602442542421">
+    <state width="1750" height="318" key="GridCell.Tab.0.bottom/0.0.1792.1120@0.0.1792.1120" timestamp="1602450465126" />
+    <state width="1750" height="318" key="GridCell.Tab.0.center" timestamp="1602450465125">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="318" key="GridCell.Tab.0.center/0.0.1792.1120@0.0.1792.1120" timestamp="1602442542421" />
-    <state width="1750" height="318" key="GridCell.Tab.0.left" timestamp="1602442542420">
+    <state width="1750" height="318" key="GridCell.Tab.0.center/0.0.1792.1120@0.0.1792.1120" timestamp="1602450465125" />
+    <state width="1750" height="318" key="GridCell.Tab.0.left" timestamp="1602450465125">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="318" key="GridCell.Tab.0.left/0.0.1792.1120@0.0.1792.1120" timestamp="1602442542420" />
-    <state width="1750" height="318" key="GridCell.Tab.0.right" timestamp="1602442542422">
+    <state width="1750" height="318" key="GridCell.Tab.0.left/0.0.1792.1120@0.0.1792.1120" timestamp="1602450465125" />
+    <state width="1750" height="318" key="GridCell.Tab.0.right" timestamp="1602450465126">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state width="1750" height="318" key="GridCell.Tab.0.right/0.0.1792.1120@0.0.1792.1120" timestamp="1602442542422" />
+    <state width="1750" height="318" key="GridCell.Tab.0.right/0.0.1792.1120@0.0.1792.1120" timestamp="1602450465126" />
     <state width="1750" height="392" key="GridCell.Tab.1.bottom" timestamp="1602440355908">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>

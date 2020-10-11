@@ -147,11 +147,35 @@ fn partition_parens(tokens: &[Token], depth: i32) -> Result<(&[Token], &[Token])
 
 /// Adds macro definitions to vec, returns the remaining tokens
 fn parse_macros<'a>(tokens: &'a [Token], macros: &mut Vec<MacroDef>) -> Result<&'a [Token]> {
-    Ok(tokens)
+    let macro_split = tokens.split(|tok| *tok == Separator(';'))
+        .collect::<Vec<_>>();
+    let (remaining, macro_defs) = macro_split.split_last().unwrap();
+
+    for macro_def in macro_defs {
+        match macro_def {
+            [Id(id), Macro, tail @..] =>
+                macros.push(MacroDef(id.clone(), parse_term(tail)?)),
+            _ =>
+                return Err("Invalid macro definition".into()),
+        }
+    }
+
+    Ok(remaining)
 }
 
-fn apply_macros(term: AstNode, macros: Vec<MacroDef>) -> AstNode {
+fn apply_macros(mut term: AstNode, mut macros: Vec<MacroDef>) -> AstNode {
+    for i in 0..macros.len() {
+        for j in i+1..macros.len() {
+            macros[j].1 = apply_macro(macros[j].1.clone(), &macros[i]);
+        }
+        term = apply_macro(term, &macros[i]);
+    }
+
     term
+}
+
+fn apply_macro(term: AstNode, macro_def: &MacroDef) -> AstNode {
+    term.substitute(&macro_def.0, &macro_def.1)
 }
 
 
@@ -179,9 +203,18 @@ fn test_parse() {
                                                 Box::new(App(Box::new(Var("a".to_owned())),
                                                              Box::new(Var("b".to_owned()))))))));
 
+    assert_eq!(parse(&tokenize("ID = \\x.x; a b")).unwrap(),
+               App(Var("a".to_owned()).into(), Var("b".to_owned()).into()));
+    assert_eq!(parse(&tokenize("ID = \\x.x; ID b")).unwrap(),
+               App(Abs("x".to_owned(), Var("x".to_owned()).into()).into(), Var("b".to_owned()).into()));
+    assert_eq!(parse(&tokenize("TRU = \\t.\\f.t; TWO = TRU 2; TWO")).unwrap(),
+               App(Abs("t".to_owned(), Abs("f".to_owned(), Var("t".to_owned()).into()).into()).into(),
+                   Var("2".to_owned()).into()));
+
     assert!(parse(&tokenize(")")).is_err());
     assert!(parse(&tokenize("abc(")).is_err());
     assert!(parse(&tokenize("\\a a")).is_err());
     assert!(parse(&tokenize("(\\a. a() \\b. b)")).is_err());
     assert!(parse(&tokenize("(\\a. a) \\b. b c.")).is_err());
+    assert!(parse(&tokenize("\\x.x;")).is_err());
 }
