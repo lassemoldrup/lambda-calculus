@@ -1,6 +1,7 @@
 use std::fmt::{Debug, Formatter, self, Display};
 use std::error::Error;
 use super::lexer::*;
+use Token::*;
 
 #[derive(Eq, PartialEq, Debug, Clone)]
 pub enum AstNode {
@@ -73,81 +74,75 @@ pub fn parse(tokens: &[Token]) -> Result<AstNode> {
 }
 
 fn parse_term(tokens: &[Token]) -> Result<AstNode> {
-    use Token::*;
     use AstNode::*;
 
-    match tokens {
-        [] => Err("Term expected".into()),
-        [Id(id)] => Ok(Var(id.clone())),
-        [Separator('('), mid @.., Separator(')')] if is_correctly_parenthesized(mid) =>
-            parse_term(mid),
-        [Id(_), ..] | [Separator('('), ..] => {
-            let (first, last) = partition_at_last_term(tokens)?;
-            Ok(App(Box::new(parse_term(first)?), Box::new(parse_term(last)?)))
-        },
-        [Lambda, Id(id), Separator('.'), tail @..] =>
-            Ok(Abs(id.clone(), Box::new(parse_term(tail)?))),
-        [tok, ..] => Err(format!("Unexpected token {:?}", tok).into()),
+    let terms = partition_terms(tokens)?;
+
+    if terms.is_empty() {
+        return Err("Term expected".into());
     }
-}
 
-fn is_correctly_parenthesized(tokens: &[Token]) -> bool {
-    use Token::*;
-
-    let mut paren_depth = 0;
-    tokens.iter().all(|tok| {
-        match tok {
-            Separator('(') => paren_depth += 1,
-            Separator(')') => paren_depth -= 1,
-            _ => {}
-        }
-        paren_depth >= 0
-    }) && paren_depth == 0
-}
-
-fn partition_at_last_term(tokens: &[Token]) -> Result<(&[Token], &[Token])> {
-    use Token::*;
-
-    // Check if last term is unparenthesized lambda
-    let mut paren_depth = 0;
-    for (i, tok) in tokens.iter().enumerate() {
-        match tok {
-            Separator('(') => paren_depth += 1,
-            Separator(')') => {
-                paren_depth -= 1;
-                if paren_depth < 0 {
-                    return Err(format!("Unexpected character {:?}", tok).into())
-                }
-            }
-            Lambda if paren_depth == 0 => return Ok((&tokens[..i], &tokens[i..])),
-            _ => {}
+    if terms.len() == 1 {
+        return match tokens {
+            [Id(id)] =>
+                Ok(Var(id.clone())),
+            [Lambda, Id(id), Separator('.'), tail @ ..] =>
+                Ok(Abs(id.clone(), parse_term(tail)?.into())),
+            [Separator('('), mid @ .., Separator(')')] =>
+                parse_term(mid),
+            _ =>
+                Err("Generic error".into()),
         }
     }
 
-    match tokens {
-        [.., Id(_)] => Ok((&tokens[..tokens.len()-1], &tokens[tokens.len()-1..])),
-        [.., Separator(')')] => {
-            let mut paren_depth = 0;
-            for (i, tok) in tokens.iter().enumerate().rev() {
-                match tok {
-                    Separator('(') => {
-                        paren_depth += 1;
-                        match paren_depth {
-                            0 => return Ok((&tokens[..i], &tokens[i..])),
-                            1 => return Err(format!("Unexpected character {:?}", Separator(')')).into()),
-                            _ => {},
-                        }
-                    },
-                    Separator(')') => paren_depth -= 1,
-                    _ => {},
-                }
-            }
-            Err(format!("Unexpected character {:?}", Separator(')')).into())
-        },
-        [_] => panic!("Tried to partition single token"),
-        [] => panic!("Tried to partition empty token list"),
-        [.., tok] => Err(format!("Unexpected token {:?}", tok).into())
+    // t1 t2 t3 t4 => App ( App ( App ( t1, t2 ), t3 ), t4 )
+    let first = parse_term(terms.first().unwrap());
+    terms.iter()
+        .skip(1)
+        .fold(first, |acc, t| Ok(App(acc?.into(), parse_term(t)?.into())))
+}
+
+fn partition_terms(tokens: &[Token]) -> Result<Vec<&[Token]>> {
+    let mut terms = Vec::new();
+
+    let mut rest = tokens;
+    while !rest.is_empty() {
+        let partition = partition_first_term(rest)?;
+        terms.push(partition.0);
+        rest = partition.1;
     }
+
+    Ok(terms)
+}
+
+fn partition_first_term(tokens: &[Token]) -> Result<(&[Token], &[Token])> {
+    match tokens {
+        [Id(_), ..] =>
+            Ok(tokens.split_at(1)),
+        [Lambda, Id(_), Separator('.'), ..] =>
+            Ok((tokens, &[])),
+        [Separator('('), ..] =>
+            partition_parens(tokens, 0),
+        [tok, ..] =>
+            Err(format!("Expected term, found {:?}", tok).into()),
+        [] =>
+            panic!("Tried to partition empty slice"),
+    }
+}
+
+fn partition_parens(tokens: &[Token], depth: i32) -> Result<(&[Token], &[Token])> {
+    fn inner(tokens: &[Token], index: usize, depth: i32) -> Result<usize> {
+        match tokens {
+            [Separator('('), tail @..] => inner(tail, index + 1, depth + 1),
+            [Separator(')'), ..] if depth == 1 => Ok(index + 1),
+            [Separator(')'), tail @..] => inner(tail, index + 1, depth - 1),
+            [_, tail @..] => inner(tail, index + 1, depth),
+            [] => Err("Missing ')'".into()),
+        }
+    }
+
+    let split_index = inner(tokens, 0, depth)?;
+    Ok((&tokens[..split_index], tokens.get(split_index..).unwrap_or(&[])))
 }
 
 /// Adds macro definitions to vec, returns the remaining tokens
@@ -168,25 +163,25 @@ fn test_parse() {
     assert_eq!(parse(&tokenize("(abc)")).unwrap(), Var("abc".to_owned()));
     assert_eq!(parse(&tokenize("a (abc)")).unwrap(),
                App(Box::new(Var("a".to_owned())), Box::new(Var("abc".to_owned()))));
-    assert_eq!(parse(&tokenize("fn a. a")).unwrap(),
+    assert_eq!(parse(&tokenize("\\a. a")).unwrap(),
                Abs("a".to_owned(), Box::new(Var("a".to_owned()))));
-    assert_eq!(parse(&tokenize("x fn a. a")).unwrap(),
+    assert_eq!(parse(&tokenize("x \\a. a")).unwrap(),
                App(Box::new(Var("x".to_owned())),
                    Box::new(Abs("a".to_owned(), Box::new(Var("a".to_owned()))))));
-    assert_eq!(parse(&tokenize("(fn x. a x) (fn b. b) c")).unwrap(),
+    assert_eq!(parse(&tokenize("(\\x. a x) (\\b. b) c")).unwrap(),
                App(Box::new(App(Box::new(Abs("x".to_string(),
                                              Box::new(App(Box::new(Var("a".to_owned())),
                                                           Box::new(Var("x".to_owned())))))),
                                 Box::new(Abs("b".to_owned(), Box::new(Var("b".to_owned())))))),
                    Box::new(Var("c".to_owned()))));
-    assert_eq!(parse(&tokenize("fn a. fn b. a b")).unwrap(),
+    assert_eq!(parse(&tokenize("\\a. \\b. a b")).unwrap(),
                Abs("a".to_owned(), Box::new(Abs("b".to_owned(),
                                                 Box::new(App(Box::new(Var("a".to_owned())),
                                                              Box::new(Var("b".to_owned()))))))));
 
     assert!(parse(&tokenize(")")).is_err());
     assert!(parse(&tokenize("abc(")).is_err());
-    assert!(parse(&tokenize("fn a a")).is_err());
-    assert!(parse(&tokenize("(fn a. a() fn b. b)")).is_err());
-    assert!(parse(&tokenize("(fn a. a) fn b. b c.")).is_err());
+    assert!(parse(&tokenize("\\a a")).is_err());
+    assert!(parse(&tokenize("(\\a. a() \\b. b)")).is_err());
+    assert!(parse(&tokenize("(\\a. a) \\b. b c.")).is_err());
 }

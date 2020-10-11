@@ -55,7 +55,7 @@ impl<'a> Tokenizer<'a> {
 
         let mut end_index= self.remaining_text.len();
         for (index, ch) in self.remaining_text.char_indices() {
-            if is_separator(ch) || ch.is_whitespace() {
+            if ch == '\\' || is_separator(ch) || ch.is_whitespace() || ch == '=' {
                 end_index = index;
                 break;
             }
