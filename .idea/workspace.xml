@@ -13,9 +13,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a1a906a8-afc0-49ad-b0ff-1db47f1096a0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/fac.lc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +49,19 @@
       <command value="cargo test" />
     </option>
   </component>
-  <component name="RunManager" selected="Cargo.Run lambda-calculus">
+  <component name="RunManager" selected="Cargo.Run fac release">
+    <configuration name="Run fac release" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+      <option name="channel" value="DEFAULT" />
+      <option name="command" value="run --release --package lambda-calculus --bin lambda-calculus fac.lc" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Run lambda-calculus" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="channel" value="DEFAULT" />
       <option name="command" value="run --package lambda-calculus --bin lambda-calculus test.lc" />
@@ -119,6 +129,7 @@
     </configuration>
     <list>
       <item itemvalue="Cargo.Run lambda-calculus" />
+      <item itemvalue="Cargo.Run fac release" />
       <item itemvalue="Cargo.Test lexer::test_tokenize" />
       <item itemvalue="Cargo.Test lexer::test_tokenize_id_or_lambda" />
       <item itemvalue="Cargo.Test parser::test_parse" />
@@ -157,10 +168,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="360" y="222" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1602450260659">
+    <state x="360" y="222" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1602454596294">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
-    <state x="360" y="222" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1792.1120@0.0.1792.1120" timestamp="1602450260659" />
+    <state x="360" y="222" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1792.1120@0.0.1792.1120" timestamp="1602454596294" />
     <state x="624" y="369" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1602450368810">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
