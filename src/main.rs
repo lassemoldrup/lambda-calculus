@@ -13,8 +13,8 @@ fn main() -> parser::Result<()> {
     File::open(args().nth(1).unwrap()).unwrap().read_to_string(&mut file).unwrap();
 
     let parsed = parse(&tokenize(&file))?;
-    println!("Parsed input: {}", parsed);
-    println!("{}", parsed.eval_normal_order());
+    println!("Parsed input: {}\n", parsed);
+    println!("Output: {}", parsed.eval_normal_order());
 
     Ok(())
 }
