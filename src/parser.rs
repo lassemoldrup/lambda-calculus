@@ -62,7 +62,17 @@ impl From<String> for ParseError {
 pub type Result<T> = std::result::Result<T, ParseError>;
 
 
+struct MacroDef(String, AstNode);
+
+
 pub fn parse(tokens: &[Token]) -> Result<AstNode> {
+    let mut macros = Vec::new();
+    parse_macros(tokens, &mut macros)
+        .and_then(|tks| parse_term(tks))
+        .map(|t| apply_macros(t, macros))
+}
+
+fn parse_term(tokens: &[Token]) -> Result<AstNode> {
     use Token::*;
     use AstNode::*;
 
@@ -70,15 +80,14 @@ pub fn parse(tokens: &[Token]) -> Result<AstNode> {
         [] => Err("Term expected".into()),
         [Id(id)] => Ok(Var(id.clone())),
         [Separator('('), mid @.., Separator(')')] if is_correctly_parenthesized(mid) =>
-            parse(mid),
+            parse_term(mid),
         [Id(_), ..] | [Separator('('), ..] => {
             let (first, last) = partition_at_last_term(tokens)?;
-            Ok(App(Box::new(parse(first)?), Box::new(parse(last)?)))
+            Ok(App(Box::new(parse_term(first)?), Box::new(parse_term(last)?)))
         },
         [Lambda, Id(id), Separator('.'), tail @..] =>
-            Ok(Abs(id.clone(), Box::new(parse(tail)?))),
-        [tok] => Err(format!("Term expected, found {:?}", tok).into()),
-        _ => Err("Generic error message".into()),
+            Ok(Abs(id.clone(), Box::new(parse_term(tail)?))),
+        [tok, ..] => Err(format!("Unexpected token {:?}", tok).into()),
     }
 }
 
@@ -139,6 +148,15 @@ fn partition_at_last_term(tokens: &[Token]) -> Result<(&[Token], &[Token])> {
         [] => panic!("Tried to partition empty token list"),
         [.., tok] => Err(format!("Unexpected token {:?}", tok).into())
     }
+}
+
+/// Adds macro definitions to vec, returns the remaining tokens
+fn parse_macros<'a>(tokens: &'a [Token], macros: &mut Vec<MacroDef>) -> Result<&'a [Token]> {
+    Ok(tokens)
+}
+
+fn apply_macros(term: AstNode, macros: Vec<MacroDef>) -> AstNode {
+    term
 }
 
 
