@@ -14,5 +14,5 @@ EQ = \n.\m. AND (LEQ n m) (LEQ m n);
 FIX = \f. (\x. f (\y. x x y)) (\x. f (\y. x x y));
 FAC = FIX \fac. \n. (EQ n 0) 1 (MULT n (fac (PRED n)));
 
-4 = \s.\z. s (s (s (s z)));
-FAC 4
+5 = \s.\z. s ( s (s (s (s z))));
+FAC 5

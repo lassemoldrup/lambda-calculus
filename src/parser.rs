@@ -1,16 +1,17 @@
+use std::borrow::Cow;
 use std::fmt::{Debug, Formatter, self, Display};
 use std::error::Error;
 use super::lexer::*;
 use Token::*;
 
 #[derive(Eq, PartialEq, Debug, Clone)]
-pub enum AstNode {
-    Var(String),
-    Abs(String, Box<AstNode>),
-    App(Box<AstNode>, Box<AstNode>),
+pub enum AstNode<'a> {
+    Var(Cow<'a, str>),
+    Abs(Cow<'a, str>, Box<AstNode<'a>>),
+    App(Box<AstNode<'a>>, Box<AstNode<'a>>),
 }
 
-impl Display for AstNode {
+impl<'a> Display for AstNode<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             AstNode::Var(x) => write!(f, "{}", x),
@@ -63,17 +64,17 @@ impl From<String> for ParseError {
 pub type Result<T> = std::result::Result<T, ParseError>;
 
 
-struct MacroDef(String, AstNode);
+struct MacroDef<'a>(&'a str, AstNode<'a>);
 
 
-pub fn parse(tokens: &[Token]) -> Result<AstNode> {
+pub fn parse<'a>(tokens: &[Token<'a>]) -> Result<AstNode<'a>> {
     let mut macros = Vec::new();
     parse_macros(tokens, &mut macros)
         .and_then(|tks| parse_term(tks))
         .map(|t| apply_macros(t, macros))
 }
 
-fn parse_term(tokens: &[Token]) -> Result<AstNode> {
+fn parse_term<'a>(tokens: &[Token<'a>]) -> Result<AstNode<'a>> {
     use AstNode::*;
 
     let terms = partition_terms(tokens)?;
@@ -84,10 +85,10 @@ fn parse_term(tokens: &[Token]) -> Result<AstNode> {
 
     if terms.len() == 1 {
         return match tokens {
-            [Id(id)] =>
-                Ok(Var(id.clone())),
-            [Lambda, Id(id), Separator('.'), tail @ ..] =>
-                Ok(Abs(id.clone(), parse_term(tail)?.into())),
+            &[Id(id)] =>
+                Ok(Var(Cow::from(id))),
+            &[Lambda, Id(id), Separator('.'), ref tail @ ..] =>
+                Ok(Abs(Cow::from(id), parse_term(tail)?.into())),
             [Separator('('), mid @ .., Separator(')')] =>
                 parse_term(mid),
             _ =>
@@ -102,7 +103,7 @@ fn parse_term(tokens: &[Token]) -> Result<AstNode> {
         .fold(first, |acc, t| Ok(App(acc?.into(), parse_term(t)?.into())))
 }
 
-fn partition_terms(tokens: &[Token]) -> Result<Vec<&[Token]>> {
+fn partition_terms<'a, 'b>(tokens: &'a [Token<'b>]) -> Result<Vec<&'a [Token<'b>]>> {
     let mut terms = Vec::new();
 
     let mut rest = tokens;
@@ -115,7 +116,7 @@ fn partition_terms(tokens: &[Token]) -> Result<Vec<&[Token]>> {
     Ok(terms)
 }
 
-fn partition_first_term(tokens: &[Token]) -> Result<(&[Token], &[Token])> {
+fn partition_first_term<'a, 'b>(tokens: &'a [Token<'b>]) -> Result<(&'a [Token<'b>], &'a [Token<'b>])> {
     match tokens {
         [Id(_), ..] =>
             Ok(tokens.split_at(1)),
@@ -130,7 +131,7 @@ fn partition_first_term(tokens: &[Token]) -> Result<(&[Token], &[Token])> {
     }
 }
 
-fn partition_parens(tokens: &[Token], depth: i32) -> Result<(&[Token], &[Token])> {
+fn partition_parens<'a, 'b>(tokens: &'a [Token<'b>], depth: i32) -> Result<(&'a [Token<'b>], &'a [Token<'b>])> {
     fn inner(tokens: &[Token], index: usize, depth: i32) -> Result<usize> {
         match tokens {
             [Separator('('), tail @..] => inner(tail, index + 1, depth + 1),
@@ -146,7 +147,7 @@ fn partition_parens(tokens: &[Token], depth: i32) -> Result<(&[Token], &[Token])
 }
 
 /// Adds macro definitions to vec, returns the remaining tokens
-fn parse_macros<'a>(tokens: &'a [Token], macros: &mut Vec<MacroDef>) -> Result<&'a [Token]> {
+fn parse_macros<'a, 'b>(tokens: &'a [Token<'b>], macros: &mut Vec<MacroDef<'b>>) -> Result<&'a [Token<'b>]> {
     let macro_split = tokens.split(|tok| *tok == Separator(';'))
         .collect::<Vec<_>>();
     let (remaining, macro_defs) = macro_split.split_last().unwrap();
@@ -154,7 +155,7 @@ fn parse_macros<'a>(tokens: &'a [Token], macros: &mut Vec<MacroDef>) -> Result<&
     for macro_def in macro_defs {
         match macro_def {
             [Id(id), Macro, tail @..] =>
-                macros.push(MacroDef(id.clone(), parse_term(tail)?)),
+                macros.push(MacroDef(id, parse_term(tail)?)),
             _ =>
                 return Err("Invalid macro definition".into()),
         }
@@ -163,7 +164,7 @@ fn parse_macros<'a>(tokens: &'a [Token], macros: &mut Vec<MacroDef>) -> Result<&
     Ok(remaining)
 }
 
-fn apply_macros(mut term: AstNode, mut macros: Vec<MacroDef>) -> AstNode {
+fn apply_macros<'a>(mut term: AstNode<'a>, mut macros: Vec<MacroDef<'a>>) -> AstNode<'a> {
     for i in 0..macros.len() {
         for j in i+1..macros.len() {
             macros[j].1 = apply_macro(macros[j].1.clone(), &macros[i]);
@@ -174,7 +175,7 @@ fn apply_macros(mut term: AstNode, mut macros: Vec<MacroDef>) -> AstNode {
     term
 }
 
-fn apply_macro(term: AstNode, macro_def: &MacroDef) -> AstNode {
+fn apply_macro<'a>(term: AstNode<'a>, macro_def: &MacroDef<'a>) -> AstNode<'a> {
     term.substitute(&macro_def.0, &macro_def.1)
 }
 
@@ -183,33 +184,33 @@ fn apply_macro(term: AstNode, macro_def: &MacroDef) -> AstNode {
 fn test_parse() {
     use AstNode::*;
 
-    assert_eq!(parse(&tokenize("abc")).unwrap(), Var("abc".to_owned()));
-    assert_eq!(parse(&tokenize("(abc)")).unwrap(), Var("abc".to_owned()));
+    assert_eq!(parse(&tokenize("abc")).unwrap(), Var("abc".into()));
+    assert_eq!(parse(&tokenize("(abc)")).unwrap(), Var("abc".into()));
     assert_eq!(parse(&tokenize("a (abc)")).unwrap(),
-               App(Box::new(Var("a".to_owned())), Box::new(Var("abc".to_owned()))));
+               App(Box::new(Var("a".into())), Box::new(Var("abc".into()))));
     assert_eq!(parse(&tokenize("\\a. a")).unwrap(),
-               Abs("a".to_owned(), Box::new(Var("a".to_owned()))));
+               Abs("a".into(), Box::new(Var("a".into()))));
     assert_eq!(parse(&tokenize("x \\a. a")).unwrap(),
-               App(Box::new(Var("x".to_owned())),
-                   Box::new(Abs("a".to_owned(), Box::new(Var("a".to_owned()))))));
+               App(Box::new(Var("x".into())),
+                   Box::new(Abs("a".into(), Box::new(Var("a".into()))))));
     assert_eq!(parse(&tokenize("(\\x. a x) (\\b. b) c")).unwrap(),
-               App(Box::new(App(Box::new(Abs("x".to_string(),
-                                             Box::new(App(Box::new(Var("a".to_owned())),
-                                                          Box::new(Var("x".to_owned())))))),
-                                Box::new(Abs("b".to_owned(), Box::new(Var("b".to_owned())))))),
-                   Box::new(Var("c".to_owned()))));
+               App(Box::new(App(Box::new(Abs("x".into(),
+                                             Box::new(App(Box::new(Var("a".into())),
+                                                          Box::new(Var("x".into())))))),
+                                Box::new(Abs("b".into(), Box::new(Var("b".into())))))),
+                   Box::new(Var("c".into()))));
     assert_eq!(parse(&tokenize("\\a. \\b. a b")).unwrap(),
-               Abs("a".to_owned(), Box::new(Abs("b".to_owned(),
-                                                Box::new(App(Box::new(Var("a".to_owned())),
-                                                             Box::new(Var("b".to_owned()))))))));
+               Abs("a".into(), Box::new(Abs("b".into(),
+                                                Box::new(App(Box::new(Var("a".into())),
+                                                             Box::new(Var("b".into()))))))));
 
     assert_eq!(parse(&tokenize("ID = \\x.x; a b")).unwrap(),
-               App(Var("a".to_owned()).into(), Var("b".to_owned()).into()));
+               App(Var("a".into()).into(), Var("b".into()).into()));
     assert_eq!(parse(&tokenize("ID = \\x.x; ID b")).unwrap(),
-               App(Abs("x".to_owned(), Var("x".to_owned()).into()).into(), Var("b".to_owned()).into()));
+               App(Abs("x".into(), Var("x".into()).into()).into(), Var("b".into()).into()));
     assert_eq!(parse(&tokenize("TRU = \\t.\\f.t; TWO = TRU 2; TWO")).unwrap(),
-               App(Abs("t".to_owned(), Abs("f".to_owned(), Var("t".to_owned()).into()).into()).into(),
-                   Var("2".to_owned()).into()));
+               App(Abs("t".into(), Abs("f".into(), Var("t".into()).into()).into()).into(),
+                   Var("2".into()).into()));
 
     assert!(parse(&tokenize(")")).is_err());
     assert!(parse(&tokenize("abc(")).is_err());

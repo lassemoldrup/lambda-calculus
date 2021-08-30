@@ -1,6 +1,8 @@
+use std::borrow::Cow;
+
 use crate::parser::AstNode;
 
-impl AstNode {
+impl<'a> AstNode<'a> {
     pub fn eval_normal_order(self) -> Self {
         use AstNode::*;
 
@@ -8,7 +10,7 @@ impl AstNode {
             Var(_) => self,
             Abs(id, body) => Abs(id, body.eval_normal_order().into()),
             App(fun, arg) => match *fun {
-                Abs(id, body) => body.substitute(&id, &*arg).eval_normal_order(),
+                Abs(id, body) => body.substitute(&id, &arg).eval_normal_order(),
                 _ => {
                     let lambda = fun.eval_call_by_name();
                     match lambda {
@@ -27,7 +29,7 @@ impl AstNode {
             App(fun, arg) => {
                 let lambda = fun.eval_call_by_name();
                 match lambda {
-                    Abs(id, body) => body.substitute(&id, &*arg).eval_call_by_name(),
+                    Abs(id, body) => body.substitute(&id, &arg).eval_call_by_name(),
                     _ => App(lambda.into(), arg.eval_call_by_name().into()),
                 }
             },
@@ -36,14 +38,14 @@ impl AstNode {
     }
 
     // Beta reduction
-    pub fn substitute(self, id: &String, term: &Self) -> Self {
+    pub fn substitute(self, id: &str, term: &Self) -> Self {
         use AstNode::*;
 
         match self {
-            Var(ref x) if x == id => term.clone(),
+            Var(x) if x == id => term.clone(),
             Var(_) => self,
             Abs(ref x, _) if x == id => self,
-            Abs(ref x, _) if term.contains(x) => { //TODO: Fix this
+            Abs(ref x, _) if term.contains(&x) => { // TODO: Fix this
                 let cloned_x = x.clone();
                 self.rename(&cloned_x).substitute(id, term)
             },
@@ -53,20 +55,20 @@ impl AstNode {
     }
 
     // Alpha reduction
-    fn rename(self, id: &String) -> Self {
+    fn rename(self, id: &str) -> Self {
         use AstNode::*;
 
         match self {
-            Var(ref x) if x == id => Var(x.clone() + "'"),
+            Var(x) if x == id => Var(primed(x)),
             Var(_) => self,
-            Abs(ref x, body) if x == id => Abs(x.clone() + "'", body.rename(id).into()),
+            Abs(x, body) if x == id => Abs(primed(x), body.rename(id).into()),
             Abs(x, body) => Abs(x, body.rename(id).into()),
             App(fun, arg) => App(fun.rename(id).into(), arg.rename(id).into()),
         }
     }
 
     // self has id in free vars
-    fn contains(&self, id: &String) -> bool {
+    fn contains(&self, id: &str) -> bool {
         use AstNode::*;
 
         match self {
@@ -75,4 +77,9 @@ impl AstNode {
             App(fun, arg) => fun.contains(id) || arg.contains(id),
         }
     }
+}
+
+fn primed(mut x: Cow<str>) -> Cow<str> {
+    x.to_mut().push('\'');
+    x
 }

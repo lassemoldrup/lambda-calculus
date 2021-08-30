@@ -1,6 +1,6 @@
 #[derive(Eq, PartialEq, Debug)]
-pub enum Token {
-    Id(String),
+pub enum Token<'a> {
+    Id(&'a str),
     Separator(char),
     Lambda,
     Macro,
@@ -18,7 +18,7 @@ impl<'a> Tokenizer<'a> {
 }
 
 impl<'a> Iterator for Tokenizer<'a> {
-    type Item = Token;
+    type Item = Token<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
         self.skip_whitespace();
@@ -31,7 +31,7 @@ impl<'a> Iterator for Tokenizer<'a> {
             .take_while(|&c| !(is_reserved(c) || c.is_whitespace()))
             .count();
         if lexeme_len == 0 {
-            lexeme_len += 1;
+            lexeme_len = 1;
         }
         let lexeme = &self.remaining_text[..lexeme_len];
         self.remaining_text = &self.remaining_text[lexeme_len..];
@@ -49,7 +49,7 @@ fn tokenize_lexeme(lexeme: &str) -> Token {
         "(" | ")" | "." | ";" => Token::Separator(lexeme.chars().next().unwrap()),
         "\\" => Token::Lambda,
         "=" => Token::Macro,
-        _ => Token::Id(lexeme.to_owned()),
+        _ => Token::Id(lexeme),
     }
 }
 
@@ -61,7 +61,7 @@ pub fn tokenize(program: &str) -> Vec<Token> {
 
 #[test]
 fn test_tokenize() {
-    assert_eq!(tokenize("abc"), vec![Token::Id("abc".to_owned())]);
+    assert_eq!(tokenize("abc"), vec![Token::Id("abc")]);
     assert_eq!(tokenize("("), vec![Token::Separator('(')]);
     assert_eq!(tokenize(")"), vec![Token::Separator(')')]);
     assert_eq!(tokenize("."), vec![Token::Separator('.')]);
@@ -70,11 +70,11 @@ fn test_tokenize() {
     assert_eq!(tokenize("="), vec![Token::Macro]);
 
     assert_eq!(tokenize("abc  ( \\ )"),
-               vec![Token::Id("abc".to_owned()), Token::Separator('('), Token::Lambda, Token::Separator(')')]);
+               vec![Token::Id("abc"), Token::Separator('('), Token::Lambda, Token::Separator(')')]);
 
     assert_eq!(tokenize("\\ a . a \n . \t )"),
-               vec![Token::Lambda, Token::Id("a".to_owned()), Token::Separator('.'),
-                    Token::Id("a".to_owned()), Token::Separator('.'), Token::Separator(')')]);
+               vec![Token::Lambda, Token::Id("a"), Token::Separator('.'),
+                    Token::Id("a"), Token::Separator('.'), Token::Separator(')')]);
 
     assert_eq!(tokenize(""), Vec::new());
 }
