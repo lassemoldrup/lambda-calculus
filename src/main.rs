@@ -1,20 +1,24 @@
-use std::env::args;
-use std::fs::File;
-use std::io::Read;
 use parser::parse;
-use lexer::tokenize;
+use std::env::args;
+use std::fs;
 
 mod lexer;
 mod parser;
-mod interpreter;
+
+#[derive(thiserror::Error, Debug)]
+enum Error {
+    #[error("IO error: {0}")]
+    Io(#[from] std::io::Error),
+    #[error("Parse error: {0}")]
+    Parse(#[from] parser::ParseError),
+}
 
 fn main() -> parser::Result<()> {
-    let mut file = String::new();
-    File::open(args().nth(1).unwrap()).unwrap().read_to_string(&mut file).unwrap();
-
-    let parsed = parse(&tokenize(&file))?;
+    let arg = args().nth(1).expect("file name should be provided");
+    let program = fs::read_to_string(arg).expect("failed to read file");
+    let parsed = parse(&program)?;
     println!("Parsed input: {}\n", parsed);
-    println!("Output: {}", parsed.eval_normal_order());
+    // println!("Output: {}", parsed.eval_normal_order());
 
     Ok(())
 }

@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use crate::parser::AstNode;
 
-impl<'a> AstNode<'a> {
+impl AstNode {
     pub fn eval_normal_order(self) -> Self {
         use AstNode::*;
 
@@ -11,14 +11,11 @@ impl<'a> AstNode<'a> {
             Abs(id, body) => Abs(id, body.eval_normal_order().into()),
             App(fun, arg) => match *fun {
                 Abs(id, body) => body.substitute(&id, &arg).eval_normal_order(),
-                _ => {
-                    let lambda = fun.eval_call_by_name();
-                    match lambda {
-                        Abs(_, _) => App(lambda.into(), arg).eval_normal_order(),
-                        _ => App(lambda.into(), arg.eval_normal_order().into()),
-                    }
-                }
-            }
+                _ => match fun.eval_call_by_name() {
+                    lambda @ Abs(_, _) => App(lambda.into(), arg).eval_normal_order(),
+                    term => App(term.into(), arg.eval_normal_order().into()),
+                },
+            },
         }
     }
 
@@ -26,12 +23,9 @@ impl<'a> AstNode<'a> {
         use AstNode::*;
 
         match self {
-            App(fun, arg) => {
-                let lambda = fun.eval_call_by_name();
-                match lambda {
-                    Abs(id, body) => body.substitute(&id, &arg).eval_call_by_name(),
-                    _ => App(lambda.into(), arg.eval_call_by_name().into()),
-                }
+            App(fun, arg) => match fun.eval_call_by_name() {
+                Abs(id, body) => body.substitute(&id, &arg).eval_call_by_name(),
+                term => App(term.into(), arg.eval_call_by_name().into()),
             },
             _ => self,
         }
@@ -45,12 +39,16 @@ impl<'a> AstNode<'a> {
             Var(x) if x == id => term.clone(),
             Var(_) => self,
             Abs(ref x, _) if x == id => self,
-            Abs(ref x, _) if term.contains(&x) => { // TODO: Fix this
+            Abs(ref x, _) if term.contains(&x) => {
+                // TODO: Fix this
                 let cloned_x = x.clone();
                 self.rename(&cloned_x).substitute(id, term)
-            },
+            }
             Abs(x, body) => Abs(x, body.substitute(id, term).into()),
-            App(fun, arg) => App(fun.substitute(id, term).into(), arg.substitute(id, term).into()),
+            App(fun, arg) => App(
+                fun.substitute(id, term).into(),
+                arg.substitute(id, term).into(),
+            ),
         }
     }
 

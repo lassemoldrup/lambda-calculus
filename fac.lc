@@ -1,18 +1,22 @@
-0 = \s.\z. z;
-1 = \s.\z. s z;
-SUCC = \n.\s.\z. s (n s z);
-PRED = \n.\f.\x. n (\g.\h. h (g f)) (\u.x) (\u.u);
-SUB = \n.\m. m PRED n;
-ADD = \n.\m. n SUCC m;
-MULT = \n.\m. n (ADD m) 0;
-TRU = \t.\f. t;
-FLS = \t.\f. f;
-AND = \b.\c. b c FLS;
-IS_0 = \n. n (\x. FLS) TRU;
-LEQ = \n.\m. IS_0 (SUB n m);
-EQ = \n.\m. AND (LEQ n m) (LEQ m n);
-FIX = \f. (\x. f (\y. x x y)) (\x. f (\y. x x y));
-FAC = FIX \fac. \n. (EQ n 0) 1 (MULT n (fac (PRED n)));
+let 0 = \s.\z. z in
+let 1 = \s.\z. s z in
+let SUCC = \n.\s.\z. s (n s z) in
+let PRED = \n.\f.\x. n (\g.\h. h (g f)) (\u.x) (\u.u) in
+let SUB = \n.\m. m PRED n in
+let ADD = \n.\m. n SUCC m in
+let MULT = \n.\m. n (ADD m) 0 in
+let TRU = \t.\f. t in
+let FLS = \t.\f. f in
+let AND = \b.\c. b c FLS in
+let IS_0 = \n. n (\x. FLS) TRU in
+let LEQ = \n.\m. IS_0 (SUB n m) in
+let EQ = \n.\m. AND (LEQ n m) (LEQ m n) in
+let FIX = \f. (\x. f (\y. x x y)) (\x. f (\y. x x y)) in
 
-5 = \s.\z. s ( s (s (s (s z))));
+let FAC = FIX \fac.\n.
+    (EQ n 0)
+        1
+        (MULT n (fac (PRED n))) in
+
+let 5 = \s.\z. s (s (s (s (s z)))) in
 FAC 5
