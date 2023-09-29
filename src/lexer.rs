@@ -81,33 +81,37 @@ fn is_reserved(ch: char) -> bool {
 }
 
 #[cfg(test)]
-fn tokenize(program: &str) -> Vec<Token> {
-    Tokenizer { remaining: program }.collect()
-}
+mod tests {
+    use super::*;
 
-#[test]
-fn test_tokenize() {
-    use Token as T;
+    fn tokenize(program: &str) -> Vec<Token> {
+        Tokenizer { remaining: program }.collect()
+    }
 
-    assert_eq!(tokenize("abc"), vec![T::Id("abc")]);
-    assert_eq!(tokenize("("), vec![T::LParen]);
-    assert_eq!(tokenize(")"), vec![T::RParen]);
-    assert_eq!(tokenize("."), vec![T::Dot]);
-    assert_eq!(tokenize("let"), vec![T::Let]);
-    assert_eq!(tokenize("in"), vec![T::In]);
-    assert_eq!(tokenize("\\"), vec![T::Lambda]);
-    assert_eq!(tokenize("λ"), vec![T::Lambda]);
-    assert_eq!(tokenize("="), vec![T::Eq]);
+    #[test]
+    fn test_tokenize() {
+        use Token as T;
 
-    assert_eq!(
-        tokenize("abc  ( \\ )"),
-        vec![T::Id("abc"), T::LParen, T::Lambda, T::RParen]
-    );
+        assert_eq!(tokenize("abc"), vec![T::Id("abc")]);
+        assert_eq!(tokenize("("), vec![T::LParen]);
+        assert_eq!(tokenize(")"), vec![T::RParen]);
+        assert_eq!(tokenize("."), vec![T::Dot]);
+        assert_eq!(tokenize("let"), vec![T::Let]);
+        assert_eq!(tokenize("in"), vec![T::In]);
+        assert_eq!(tokenize("\\"), vec![T::Lambda]);
+        assert_eq!(tokenize("λ"), vec![T::Lambda]);
+        assert_eq!(tokenize("="), vec![T::Eq]);
 
-    assert_eq!(
-        tokenize("\\a. a \n . \t )"),
-        vec![T::Lambda, T::Id("a"), T::Dot, T::Id("a"), T::Dot, T::RParen]
-    );
+        assert_eq!(
+            tokenize("abc  ( \\ )"),
+            vec![T::Id("abc"), T::LParen, T::Lambda, T::RParen]
+        );
 
-    assert_eq!(tokenize(""), Vec::new());
+        assert_eq!(
+            tokenize("\\a. a \n . \t )"),
+            vec![T::Lambda, T::Id("a"), T::Dot, T::Id("a"), T::Dot, T::RParen]
+        );
+
+        assert_eq!(tokenize(""), Vec::new());
+    }
 }

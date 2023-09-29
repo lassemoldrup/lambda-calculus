@@ -75,6 +75,12 @@ impl AstNode {
     }
 }
 
+impl PartialEq<AstNode> for Ast<'_> {
+    fn eq(&self, other: &AstNode) -> bool {
+        self.root.as_ref() == other
+    }
+}
+
 pub struct AstNodeDisplay<'ctx, 'prog> {
     node: &'ctx AstNode,
     idents: &'ctx Idents<'prog>,
@@ -104,6 +110,12 @@ impl Display for AstNodeDisplay<'_, '_> {
 impl Display for Ast<'_> {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         write!(f, "{}", self.root.display(&self.idents))
+    }
+}
+
+impl Debug for Ast<'_> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        Display::fmt(self, f)
     }
 }
 
@@ -138,7 +150,11 @@ impl From<String> for ParseError {
 
 pub type Result<T> = std::result::Result<T, ParseError>;
 
-pub struct Parser<'prog> {
+pub fn parse<'prog>(program: &'prog str) -> Result<Ast<'prog>> {
+    Parser::new(program).parse()
+}
+
+struct Parser<'prog> {
     tokenizer: Peekable<Tokenizer<'prog>>,
     idents: Idents<'prog>,
     paren_level: usize,
@@ -244,76 +260,107 @@ impl<'prog> Parser<'prog> {
     }
 }
 
-// #[test]
-// fn test_parse() -> Result<()> {
-//     use AstNode::*;
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-//     assert_eq!(parse(&tokenize("abc"))?, Var("abc".into()));
-//     assert_eq!(parse(&tokenize("(abc)")).unwrap(), Var("abc".into()));
-//     assert_eq!(
-//         parse(&tokenize("a (abc)")).unwrap(),
-//         App(Box::new(Var("a".into())), Box::new(Var("abc".into())))
-//     );
-//     assert_eq!(
-//         parse(&tokenize("\\a. a")).unwrap(),
-//         Abs("a".into(), Box::new(Var("a".into())))
-//     );
-//     assert_eq!(
-//         parse(&tokenize("x \\a. a")).unwrap(),
-//         App(
-//             Box::new(Var("x".into())),
-//             Box::new(Abs("a".into(), Box::new(Var("a".into()))))
-//         )
-//     );
-//     assert_eq!(
-//         parse(&tokenize("(\\x. a x) (\\b. b) c")).unwrap(),
-//         App(
-//             Box::new(App(
-//                 Box::new(Abs(
-//                     "x".into(),
-//                     Box::new(App(Box::new(Var("a".into())), Box::new(Var("x".into()))))
-//                 )),
-//                 Box::new(Abs("b".into(), Box::new(Var("b".into()))))
-//             )),
-//             Box::new(Var("c".into()))
-//         )
-//     );
-//     assert_eq!(
-//         parse(&tokenize("\\a. \\b. a b")).unwrap(),
-//         Abs(
-//             "a".into(),
-//             Box::new(Abs(
-//                 "b".into(),
-//                 Box::new(App(Box::new(Var("a".into())), Box::new(Var("b".into()))))
-//             ))
-//         )
-//     );
+    #[test]
+    fn test_parse_var() -> Result<()> {
+        assert_eq!(parse("abc")?, AstNode::Var(0));
+        assert_eq!(parse("(abc)")?, AstNode::Var(0));
+        Ok(())
+    }
 
-//     assert_eq!(
-//         parse(&tokenize("ID = \\x.x; a b")).unwrap(),
-//         App(Var("a".into()).into(), Var("b".into()).into())
-//     );
-//     assert_eq!(
-//         parse(&tokenize("ID = \\x.x; ID b")).unwrap(),
-//         App(
-//             Abs("x".into(), Var("x".into()).into()).into(),
-//             Var("b".into()).into()
-//         )
-//     );
-//     assert_eq!(
-//         parse(&tokenize("TRU = \\t.\\f.t; TWO = TRU 2; TWO")).unwrap(),
-//         App(
-//             Abs("t".into(), Abs("f".into(), Var("t".into()).into()).into()).into(),
-//             Var("2".into()).into()
-//         )
-//     );
+    #[test]
+    fn test_parse_app() -> Result<()> {
+        use AstNode::*;
 
-//     assert!(parse(&tokenize(")")).is_err());
-//     assert!(parse(&tokenize("abc(")).is_err());
-//     assert!(parse(&tokenize("\\a a")).is_err());
-//     assert!(parse(&tokenize("(\\a. a() \\b. b)")).is_err());
-//     assert!(parse(&tokenize("(\\a. a) \\b. b c.")).is_err());
-//     assert!(parse(&tokenize("\\x.x;")).is_err());
+        assert_eq!(parse("a b")?, App(Rc::new(Var(0)), Rc::new(Var(1))));
+        assert_eq!(parse("(a b)")?, App(Rc::new(Var(0)), Rc::new(Var(1))));
+        assert_eq!(
+            parse("a b c")?,
+            App(
+                Rc::new(App(Rc::new(Var(0)), Rc::new(Var(1)))),
+                Rc::new(Var(2))
+            )
+        );
+        assert_eq!(
+            parse("a (b c)")?,
+            App(
+                Rc::new(Var(0)),
+                Rc::new(App(Rc::new(Var(1)), Rc::new(Var(2))))
+            )
+        );
+        Ok(())
+    }
 
-//     Ok(())
-// }
+    #[test]
+    fn test_parse_abs() -> Result<()> {
+        use AstNode::*;
+
+        assert_eq!(parse("\\a. a")?, Abs(0, Rc::new(Var(0))));
+        assert_eq!(
+            parse("\\a. \\b. a b")?,
+            Abs(
+                0,
+                Rc::new(Abs(1, Rc::new(App(Rc::new(Var(0)), Rc::new(Var(1))))))
+            )
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_parse_complex() -> Result<()> {
+        use AstNode::*;
+
+        assert_eq!(
+            parse("x \\a. a")?,
+            App(Rc::new(Var(0)), Rc::new(Abs(1, Rc::new(Var(1)))))
+        );
+        assert_eq!(
+            parse("(\\x. a x) (\\b. b) c")?,
+            App(
+                Rc::new(App(
+                    Rc::new(Abs(0, Rc::new(App(Rc::new(Var(1)), Rc::new(Var(0)))))),
+                    Rc::new(Abs(2, Rc::new(Var(2))))
+                )),
+                Rc::new(Var(3))
+            )
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_macros() -> Result<()> {
+        use AstNode::*;
+
+        assert_eq!(
+            parse("let ID = \\x.x in a b")?,
+            App(Rc::new(Var(2)), Rc::new(Var(3)))
+        );
+        assert_eq!(
+            parse("let ID = \\x.x in ID b")?,
+            App(Rc::new(Abs(1, Rc::new(Var(1)))), Rc::new(Var(2)))
+        );
+        assert_eq!(
+            parse("let TRU = \\t.\\f.t in let TWO = TRU 2 in TWO")?,
+            App(
+                Rc::new(Abs(1, Rc::new(Abs(2, Rc::new(Var(1)))))),
+                Rc::new(Var(4))
+            )
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_parse_errors() -> Result<()> {
+        assert!(parse(")").is_err());
+        assert!(parse("abc(").is_err());
+        assert!(parse("\\a a").is_err());
+        assert!(parse("(\\a. a() \\b. b)").is_err());
+        assert!(parse("(\\a. a) \\b. b c.").is_err());
+        assert!(parse("\\x.x in").is_err());
+        Ok(())
+    }
+}
