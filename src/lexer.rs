@@ -1,8 +1,8 @@
 use std::iter::FusedIterator;
 
 #[derive(Eq, PartialEq, Debug)]
-pub enum Token<'id> {
-    Id(&'id str),
+pub enum Token<'prog> {
+    Id(&'prog str),
     Lambda,
     Dot,
     LParen,
@@ -12,16 +12,12 @@ pub enum Token<'id> {
     In,
 }
 
-pub fn tokenize(program: &str) -> Vec<Token> {
-    Tokenizer { remaining: program }.collect()
+pub struct Tokenizer<'prog> {
+    pub remaining: &'prog str,
 }
 
-pub struct Tokenizer<'a> {
-    remaining: &'a str,
-}
-
-impl<'a> Tokenizer<'a> {
-    pub fn new(program: &'a str) -> Self {
+impl<'prog> Tokenizer<'prog> {
+    pub fn new(program: &'prog str) -> Self {
         Self { remaining: program }
     }
 
@@ -30,8 +26,8 @@ impl<'a> Tokenizer<'a> {
     }
 }
 
-impl<'a> Iterator for Tokenizer<'a> {
-    type Item = Token<'a>;
+impl<'prog> Iterator for Tokenizer<'prog> {
+    type Item = Token<'prog>;
 
     fn next(&mut self) -> Option<Self::Item> {
         self.skip_whitespace();
@@ -82,6 +78,11 @@ impl FusedIterator for Tokenizer<'_> {}
 
 fn is_reserved(ch: char) -> bool {
     ch == '(' || ch == ')' || ch == '.' || ch == '\\' || ch == 'λ' || ch == '='
+}
+
+#[cfg(test)]
+fn tokenize(program: &str) -> Vec<Token> {
+    Tokenizer { remaining: program }.collect()
 }
 
 #[test]
