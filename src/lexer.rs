@@ -90,26 +90,26 @@ mod tests {
 
     #[test]
     fn test_tokenize() {
-        use Token as T;
+        use Token::*;
 
-        assert_eq!(tokenize("abc"), vec![T::Id("abc")]);
-        assert_eq!(tokenize("("), vec![T::LParen]);
-        assert_eq!(tokenize(")"), vec![T::RParen]);
-        assert_eq!(tokenize("."), vec![T::Dot]);
-        assert_eq!(tokenize("let"), vec![T::Let]);
-        assert_eq!(tokenize("in"), vec![T::In]);
-        assert_eq!(tokenize("\\"), vec![T::Lambda]);
-        assert_eq!(tokenize("λ"), vec![T::Lambda]);
-        assert_eq!(tokenize("="), vec![T::Eq]);
+        assert_eq!(tokenize("abc"), vec![Id("abc")]);
+        assert_eq!(tokenize("("), vec![LParen]);
+        assert_eq!(tokenize(")"), vec![RParen]);
+        assert_eq!(tokenize("."), vec![Dot]);
+        assert_eq!(tokenize("let"), vec![Let]);
+        assert_eq!(tokenize("in"), vec![In]);
+        assert_eq!(tokenize("\\"), vec![Lambda]);
+        assert_eq!(tokenize("λ"), vec![Lambda]);
+        assert_eq!(tokenize("="), vec![Eq]);
 
         assert_eq!(
             tokenize("abc  ( \\ )"),
-            vec![T::Id("abc"), T::LParen, T::Lambda, T::RParen]
+            vec![Id("abc"), LParen, Lambda, RParen]
         );
 
         assert_eq!(
             tokenize("\\a. a \n . \t )"),
-            vec![T::Lambda, T::Id("a"), T::Dot, T::Id("a"), T::Dot, T::RParen]
+            vec![Lambda, Id("a"), Dot, Id("a"), Dot, RParen]
         );
 
         assert_eq!(tokenize(""), Vec::new());

@@ -7,12 +7,31 @@ use std::iter::Peekable;
 use std::ops::Index;
 use std::rc::Rc;
 
-type Ident = usize;
+#[derive(Clone, Copy)]
+pub struct PrimedIdent<'prog>(&'prog str, u16);
+
+impl<'prog> PrimedIdent<'prog> {
+    fn new(s: &'prog str) -> Self {
+        Self(s, 0)
+    }
+}
+
+impl Display for PrimedIdent<'_> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)?;
+        for _ in 0..self.1 {
+            write!(f, "'")?;
+        }
+        Ok(())
+    }
+}
+
+pub type IdentRef = usize;
 
 #[derive(Default)]
-struct Idents<'prog> {
-    num_to_string: Vec<&'prog str>,
-    string_to_num: HashMap<&'prog str, Ident>,
+pub struct Idents<'prog> {
+    num_to_string: Vec<PrimedIdent<'prog>>,
+    string_to_num: HashMap<&'prog str, IdentRef>,
 }
 
 impl<'prog> Idents<'prog> {
@@ -20,35 +39,42 @@ impl<'prog> Idents<'prog> {
         Self::default()
     }
 
-    fn get_ident(&mut self, s: &'prog str) -> Ident {
+    fn get_ident(&mut self, s: &'prog str) -> IdentRef {
         let string_to_num = &mut self.string_to_num;
         let num_to_string = &mut self.num_to_string;
         *string_to_num.entry(s).or_insert_with(|| {
-            num_to_string.push(s);
+            num_to_string.push(PrimedIdent::new(s));
             num_to_string.len() - 1
         })
     }
+
+    pub fn prime(&mut self, id: IdentRef) -> IdentRef {
+        let ident = self.num_to_string[id];
+        let new_ident = PrimedIdent(ident.0, ident.1 + 1);
+        self.num_to_string.push(new_ident);
+        self.num_to_string.len() - 1
+    }
 }
 
-impl<'prog> Index<usize> for Idents<'prog> {
-    type Output = &'prog str;
+impl<'prog> Index<IdentRef> for Idents<'prog> {
+    type Output = PrimedIdent<'prog>;
 
-    fn index(&self, index: usize) -> &Self::Output {
+    fn index(&self, index: IdentRef) -> &Self::Output {
         &self.num_to_string[index]
     }
 }
 
-type MacroMap = HashMap<usize, Rc<AstNode>>;
+type MacroMap = HashMap<IdentRef, Rc<AstNode>>;
 
 pub struct Ast<'prog> {
-    root: Rc<AstNode>,
-    idents: Idents<'prog>,
+    pub root: Rc<AstNode>,
+    pub idents: Idents<'prog>,
 }
 
 #[derive(Eq, PartialEq, Debug, Clone)]
 pub enum AstNode {
-    Var(Ident),
-    Abs(Ident, Rc<Self>),
+    Var(IdentRef),
+    Abs(IdentRef, Rc<Self>),
     App(Rc<Self>, Rc<Self>),
 }
 
@@ -221,7 +247,21 @@ impl<'prog> Parser<'prog> {
         Ok(term)
     }
 
+    /// Parses a single term in a sequence of terms. E.g. in `a (λb.b) c`, `a`,
+    /// `(λb.b)` and `c` all count as individual terms, and we would return
+    /// `Ok(Some(Var("a")))` in this case. Furthermore, the tokennizer is not advanced
+    /// past the last token of the term, so that the next call to `parse_one` will
+    /// return the next term.
+    ///
+    /// If we encounter a closing parenthesis
+    /// or the `in` keyword, we return `Ok(None)`, which indicates that we have
+    /// reached the end of the current sequence of terms.
+    ///
+    /// # Errors
+    /// Returns an error if the next term is invalid.
     fn parse_one(&mut self) -> Result<Option<AstNode>> {
+        // We peek because we should only consume tokens that are part of the term
+        // that we are parsing.
         match self.tokenizer.peek() {
             Some(Token::Id(id)) => {
                 let id = self.idents.get_ident(id);
@@ -242,11 +282,9 @@ impl<'prog> Parser<'prog> {
             }
             Some(Token::LParen) => {
                 self.paren_level += 1;
-                // Consume '('.
                 self.tokenizer.next();
                 let res = self.parse_term();
                 self.paren_level -= 1;
-                // Consume ')'.
                 if self.tokenizer.next() != Some(Token::RParen) {
                     return Err(format!("Expected ')'").into());
                 }

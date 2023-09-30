@@ -3,6 +3,7 @@ use std::fs;
 
 use parser::parse;
 
+mod eval;
 mod lexer;
 mod parser;
 
@@ -17,9 +18,9 @@ enum Error {
 fn main() -> parser::Result<()> {
     let arg = args().nth(1).expect("file name should be provided");
     let program = fs::read_to_string(arg).expect("failed to read file");
-    let parsed = parse(&program)?;
-    println!("Parsed input: {}\n", parsed);
-    // println!("Output: {}", parsed.eval_normal_order());
-
+    let mut parsed = parse(&program)?;
+    println!("Parsed input: {parsed}");
+    parsed.eval_normal_order();
+    println!("Output: {parsed}");
     Ok(())
 }
